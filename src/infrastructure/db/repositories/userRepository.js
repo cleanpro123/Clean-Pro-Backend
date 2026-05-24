@@ -1,0 +1,22 @@
+const User = require('../models/User');
+
+module.exports = {
+  findById: (id) => User.findById(id),
+  findByEmail: (email) => User.findOne({ email: String(email).toLowerCase() }),
+  findByPhone: (phone) => User.findOne({ phone }),
+  list: ({ status, q, skip = 0, limit = 50 } = {}) => {
+    const filter = {};
+    if (status) filter.status = status;
+    if (q) {
+      const re = new RegExp(q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      filter.$or = [{ name: re }, { email: re }, { phone: re }];
+    }
+    return User.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
+  },
+  count: (filter = {}) => User.countDocuments(filter),
+  create: (data) => User.create(data),
+  updateById: (id, patch) =>
+    User.findByIdAndUpdate(id, patch, { new: true, runValidators: true }),
+  setStatus: (id, status) =>
+    User.findByIdAndUpdate(id, { status }, { new: true }),
+};
