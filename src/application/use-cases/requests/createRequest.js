@@ -4,6 +4,17 @@ const requestRepo = require('../../../infrastructure/db/repositories/requestRepo
 const userRepo = require('../../../infrastructure/db/repositories/userRepository');
 const agentRepo = require('../../../infrastructure/db/repositories/agentRepository');
 const mapRepo = require('../../../infrastructure/db/repositories/mapRepository');
+const addressRepo = require('../../../infrastructure/db/repositories/addressRepository');
+
+// Flatten an Address document into a single readable line — used only to match
+// the order against an agent's service area (the address itself is stored as a
+// reference, not a snapshot).
+function formatAddress(a) {
+  return [a.label, a.line1, a.line2, a.line, a.city, a.area, a.pincode]
+    .map((s) => String(s || '').trim())
+    .filter(Boolean)
+    .join(', ');
+}
 
 // Words that appear in almost every address and carry no locality signal —
 // excluded so they don't inflate a match.
@@ -84,34 +95,44 @@ async function pickAgent(user, address) {
 // MAIN ORDER-CREATION USE CASE
 // Takes the customer's id and order details, validates the customer,
 // computes the price, auto-assigns a delivery agent, then saves the order.
-async function createRequest({ userId, address, pickupSlot, items }) {
+async function createRequest({ userId, addressId, pickupSlot, items }) {
   // 1) Load the customer placing the order and make sure they're allowed to
   const user = await userRepo.findById(userId);
   if (!user) throw AppError.notFound('User not found');
   if (user.status === 'blocked') throw AppError.forbidden('Account blocked');
 
-  // 2) Sum up the order total (quantity × price for every item)
+  // 2) Resolve the saved pickup address and confirm it belongs to this user.
+  const addressDoc = await addressRepo.findById(addressId);
+  if (!addressDoc || String(addressDoc.userId) !== String(user._id)) {
+    throw AppError.notFound('Address not found');
+  }
+  // Flattened text is used only to match the order to an agent's service area.
+  const addressText = formatAddress(addressDoc);
+
+  // 3) Sum up the order total (quantity × price for every item)
   const total = items.reduce((sum, it) => sum + it.qty * it.price, 0);
 
-  // 3) Auto-assign at creation to the agent whose area best matches the
+  // 4) Auto-assign at creation to the agent whose area best matches the
   // pickup address. If no agents are active right now the request stays
   // pending and can be assigned later.
-  const picked = await pickAgent(user, address);
+  const picked = await pickAgent(user, addressText);
 
-  // 4) Persist the new order to the database and return it
+  // 5) Persist the new order to the database
   const req = await requestRepo.create({
     code: genCode(),
     userId: user._id,
     customerName: user.name,
     phone: user.phone,
-    address,
+    addressId: addressDoc._id,
     pickupSlot: pickupSlot || '',
     items,
     total,
     status: picked ? 'assigned' : 'pending',
     agentId: picked ? picked._id : null,
   });
-  return req;
+  // Return the order with its address populated so the caller gets the full,
+  // ready-to-render address straight away.
+  return requestRepo.findById(req._id);
 }
 
 module.exports = createRequest;

@@ -37,7 +37,15 @@ const requestSchema = new mongoose.Schema(
     },
     customerName: { type: String, required: true },
     phone: { type: String, required: true },
-    address: { type: String, required: true },
+    // The chosen pickup address — a reference to the customer's Address
+    // document. Reads populate it so every view renders the full, up-to-date
+    // address from this single source of truth.
+    addressId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Address',
+      required: true,
+      index: true,
+    },
     items: { type: [lineItemSchema], default: [] },
     total: { type: Number, required: true, min: 0 },
     status: {

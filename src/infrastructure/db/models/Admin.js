@@ -13,6 +13,7 @@ adminSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
   transform: (_doc, ret) => {
+    
     delete ret.passwordHash;
     delete ret._id;
     return ret;

@@ -10,7 +10,9 @@ const lineItem = z.object({
 
 const createSchema = z.object({
   body: z.object({
-    address: z.string().min(2),
+    // The order links to one of the customer's saved addresses by id; every
+    // view populates the full address from it.
+    addressId: objectIdSchema,
     pickupSlot: z.string().optional(),
     items: z.array(lineItem).min(1),
   }),
