@@ -1,6 +1,8 @@
 const asyncHandler = require('../../../shared/utils/asyncHandler');
 const { ok, created } = require('../../../shared/utils/respond');
 const registerUser = require('../../../application/use-cases/auth/registerUser');
+const requestEmailOtp = require('../../../application/use-cases/auth/requestEmailOtp');
+const verifyEmailOtp = require('../../../application/use-cases/auth/verifyEmailOtp');
 const login = require('../../../application/use-cases/auth/login');
 const refreshTokens = require('../../../application/use-cases/auth/refreshTokens');
 const logout = require('../../../application/use-cases/auth/logout');
@@ -11,9 +13,22 @@ const AppError = require('../../../shared/errors/AppError');
 
 const repos = { user: userRepo, agent: agentRepo, admin: adminRepo };
 
+exports.requestOtp = asyncHandler(async (req, res) => {
+  const result = await requestEmailOtp(req.body);
+  ok(res, result);
+});
+
+exports.verifyOtp = asyncHandler(async (req, res) => {
+  const result = await verifyEmailOtp(req.body);
+  ok(res, result);
+});
+
 exports.register = asyncHandler(async (req, res) => {
-  const { user, tokens } = await registerUser(req.body);
-  created(res, { profile: user, tokens });
+  const result = await registerUser(req.body);
+  if (result.pending) {
+    return created(res, { pending: true, profile: result.user });
+  }
+  created(res, { profile: result.user, tokens: result.tokens });
 });
 
 exports.loginUser = asyncHandler(async (req, res) => {

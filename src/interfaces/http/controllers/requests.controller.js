@@ -13,6 +13,11 @@ function paginate(req) {
 }
 
 // ── User ──
+
+// CREATE ORDER (customer)
+// Handles "POST /api/requests": passes the logged-in user's id plus the
+// order details from the request body to the createRequest use case,
+// then responds 201 Created with the new order.
 exports.userCreate = asyncHandler(async (req, res) => {
   const r = await createRequest({ userId: req.user.id, ...req.body });
   created(res, r);

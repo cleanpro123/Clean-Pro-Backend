@@ -9,12 +9,15 @@ const {
   idParamSchema,
 } = require('../../../shared/validators/catalog.schemas');
 
-router.use(authenticate, requireRole('admin'));
+// Any signed-in user can read the list of service areas — customers need
+// it to pick a nearby area when adding an address. Mutations stay admin-only.
+router.use(authenticate);
 
 router.get('/', ctrl.list);
-router.post('/', validate(mapCreateSchema), ctrl.create);
 router.get('/:id', validate(idParamSchema), ctrl.get);
-router.patch('/:id', validate(mapUpdateSchema), ctrl.update);
-router.delete('/:id', validate(idParamSchema), ctrl.remove);
+
+router.post('/', requireRole('admin'), validate(mapCreateSchema), ctrl.create);
+router.patch('/:id', requireRole('admin'), validate(mapUpdateSchema), ctrl.update);
+router.delete('/:id', requireRole('admin'), validate(idParamSchema), ctrl.remove);
 
 module.exports = router;

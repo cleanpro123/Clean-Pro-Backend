@@ -22,8 +22,28 @@ async function login({ role, email, password }) {
     throw AppError.forbidden('This account has been blocked');
   }
 
+  // Business accounts awaiting / denied admin review can't sign in.
+  if (subject.approvalStatus === 'pending') {
+    throw new AppError(
+      'Your business account is pending admin approval',
+      403,
+      'PENDING_APPROVAL'
+    );
+  }
+  if (subject.approvalStatus === 'rejected') {
+    throw new AppError(
+      'Your business account request was not approved',
+      403,
+      'ACCOUNT_REJECTED'
+    );
+  }
+
   const ok = await comparePassword(password, subject.passwordHash);
   if (!ok) throw AppError.unauthorized('Invalid credentials');
+
+  // Customers carry an addresses array of Address refs — expand them so the
+  // post-login profile matches what /auth/me returns.
+  if (role === 'user') await subject.populate('addresses');
 
   const tokens = await issueTokens({
     subjectId: subject._id,

@@ -156,12 +156,15 @@ async function main() {
       body: { name: u.name, phone: u.phone, email: u.email, password: u.password },
     });
     const userToken = reg.tokens.accessToken;
-    // attach addresses to that user
-    await call('/users/me', {
-      method: 'PATCH',
-      body: { addresses: u.addresses },
-      token: userToken,
-    });
+    // attach addresses to that user — each is its own Address document now,
+    // created through the dedicated endpoint.
+    for (const addr of u.addresses) {
+      await call('/users/me/addresses', {
+        method: 'POST',
+        body: addr,
+        token: userToken,
+      });
+    }
     userSessions.push({ profile: reg.profile, token: userToken });
     console.log(`  · ${u.name} (+${u.addresses.length} addresses)`);
   }

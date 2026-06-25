@@ -4,10 +4,14 @@ const {
   registerSchema,
   loginSchema,
   refreshSchema,
+  requestOtpSchema,
+  verifyOtpSchema,
 } = require('../../../shared/validators/auth.schemas');
 const authenticate = require('../middleware/authenticate');
 const auth = require('../controllers/auth.controller');
 
+router.post('/otp/request', validate(requestOtpSchema), auth.requestOtp);
+router.post('/otp/verify', validate(verifyOtpSchema), auth.verifyOtp);
 router.post('/register', validate(registerSchema), auth.register);
 router.post('/login/user', validate(loginSchema), auth.loginUser);
 router.post('/login/agent', validate(loginSchema), auth.loginAgent);

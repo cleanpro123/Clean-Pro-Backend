@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 
-const addressSchema = new mongoose.Schema(
+const companySchema = new mongoose.Schema(
   {
-    label: String,
-    line: String,
-    city: String,
-    pincode: String,
+    name: { type: String, trim: true },
+    // 'laundry_company' | 'clothing_company' | 'authority' | 'other'
+    businessType: { type: String },
+    registrationNo: { type: String, trim: true },
+    address: { type: String, trim: true },
+    website: { type: String, trim: true },
   },
   { _id: false }
 );
@@ -16,7 +18,26 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, required: true, unique: true, index: true },
     email: { type: String, required: true, unique: true, lowercase: true, index: true },
     passwordHash: { type: String, required: true },
-    addresses: [addressSchema],
+    avatar: { type: String, default: '' },
+    accountType: {
+      type: String,
+      enum: ['personal', 'business'],
+      default: 'personal',
+      index: true,
+    },
+    // personal accounts are auto-approved; business accounts await admin review.
+    approvalStatus: {
+      type: String,
+      enum: ['approved', 'pending', 'rejected'],
+      default: 'approved',
+      index: true,
+    },
+    company: { type: companySchema, default: undefined },
+    // Ordered references into the Address collection. Populate to expand into
+    // full address documents.
+    addresses: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'Address' },
+    ],
     status: {
       type: String,
       enum: ['active', 'blocked'],

@@ -13,6 +13,19 @@ const env = {
   bcryptRounds: Number(process.env.BCRYPT_ROUNDS || 10),
   corsOrigin: process.env.CORS_ORIGIN || '*',
   logLevel: process.env.LOG_LEVEL || 'info',
+  email: {
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: Number(process.env.EMAIL_PORT || 465),
+    secure: String(process.env.EMAIL_SECURE ?? 'true') === 'true',
+    user: process.env.EMAIL_USER || 'cleanproofficial1@gmail.com',
+    pass: process.env.EMAIL_APP_PASSWORD || 'mpcg vqec zqiu nvkn',
+    from: process.env.EMAIL_FROM || 'Nutro <no-reply@nutro.app>',
+  },
+  otp: {
+    length: Number(process.env.OTP_LENGTH || 6),
+    ttlMinutes: Number(process.env.OTP_TTL_MINUTES || 10),
+    maxAttempts: Number(process.env.OTP_MAX_ATTEMPTS || 5),
+  },
 };
 
 module.exports = env;

@@ -13,7 +13,6 @@ const agentSchema = new mongoose.Schema(
       index: true,
     },
     place: { type: String, default: '' },
-    zone: { type: String, default: '' },
     vehicle: { type: String, default: '' },
     status: {
       type: String,

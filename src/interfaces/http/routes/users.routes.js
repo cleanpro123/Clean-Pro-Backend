@@ -7,7 +7,10 @@ const {
   listSchema,
   idParamSchema,
   setStatusSchema,
+  setApprovalSchema,
   updateMeSchema,
+  addAddressSchema,
+  addressIdParamSchema,
 } = require('../../../shared/validators/users.schemas');
 
 router.use(authenticate);
@@ -15,6 +18,21 @@ router.use(authenticate);
 // User self
 router.get('/me', requireRole('user'), ctrl.me);
 router.patch('/me', requireRole('user'), validate(updateMeSchema), ctrl.updateMe);
+
+// User self — addresses (separate Address collection)
+router.get('/me/addresses', requireRole('user'), ctrl.listAddresses);
+router.post(
+  '/me/addresses',
+  requireRole('user'),
+  validate(addAddressSchema),
+  ctrl.addAddress
+);
+router.delete(
+  '/me/addresses/:addressId',
+  requireRole('user'),
+  validate(addressIdParamSchema),
+  ctrl.removeAddress
+);
 
 // Admin
 router.get('/', requireRole('admin'), validate(listSchema), ctrl.list);
@@ -24,6 +42,12 @@ router.patch(
   requireRole('admin'),
   validate(setStatusSchema),
   ctrl.setStatus
+);
+router.patch(
+  '/:id/approval',
+  requireRole('admin'),
+  validate(setApprovalSchema),
+  ctrl.setApproval
 );
 
 module.exports = router;

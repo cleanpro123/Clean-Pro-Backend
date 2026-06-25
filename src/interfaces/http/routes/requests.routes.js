@@ -14,6 +14,10 @@ const {
 router.use(authenticate);
 
 // User
+
+// CREATE ORDER  →  POST /api/requests
+// Only logged-in users with the "user" role can place an order.
+// validate(createSchema) checks the request body before it reaches the controller.
 router.post(
   '/',
   requireRole('user'),

@@ -25,6 +25,7 @@ function createApp() {
   app.use(express.urlencoded({ extended: false }));
   if (env.nodeEnv !== 'test') app.use(morgan('dev'));
 
+  
   app.get('/health', (_req, res) => res.json({ ok: true, status: 'up' }));
 
   app.use('/api/auth', authRoutes);
