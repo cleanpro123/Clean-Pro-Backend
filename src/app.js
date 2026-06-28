@@ -27,6 +27,11 @@ function createApp() {
   if (env.nodeEnv !== 'test') app.use(morgan('dev'));
 
   
+  // Root + health both answer 200 so platform health checks and uptime
+  // monitors that ping "/" don't get a 404.
+  app.get('/', (_req, res) =>
+    res.json({ ok: true, service: 'Clean Pro API', status: 'up' })
+  );
   app.get('/health', (_req, res) => res.json({ ok: true, status: 'up' }));
 
   app.use('/api/auth', authRoutes);

@@ -35,7 +35,10 @@ function errorHandler(err, req, res, _next) {
   if (appErr.statusCode >= 500) {
     logger.error({ err, req: { method: req.method, url: req.originalUrl } });
   } else {
-    logger.warn(
+    // 4xx are expected client errors (expired token, not-found route, failed
+    // validation). Log at info so routine cases like token refresh don't read
+    // as warnings.
+    logger.info(
       { code: appErr.code, message: appErr.message, url: req.originalUrl },
       'request error'
     );
