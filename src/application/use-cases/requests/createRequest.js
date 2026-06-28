@@ -5,6 +5,7 @@ const userRepo = require('../../../infrastructure/db/repositories/userRepository
 const agentRepo = require('../../../infrastructure/db/repositories/agentRepository');
 const mapRepo = require('../../../infrastructure/db/repositories/mapRepository');
 const addressRepo = require('../../../infrastructure/db/repositories/addressRepository');
+const notificationRepo = require('../../../infrastructure/db/repositories/notificationRepository');
 
 // Flatten an Address document into a single readable line — used only to match
 // the order against an agent's service area (the address itself is stored as a
@@ -95,7 +96,7 @@ async function pickAgent(user, address) {
 // MAIN ORDER-CREATION USE CASE
 // Takes the customer's id and order details, validates the customer,
 // computes the price, auto-assigns a delivery agent, then saves the order.
-async function createRequest({ userId, addressId, pickupSlot, items }) {
+async function createRequest({ userId, addressId, pickupSlot, paymentMethod, items }) {
   // 1) Load the customer placing the order and make sure they're allowed to
   const user = await userRepo.findById(userId);
   if (!user) throw AppError.notFound('User not found');
@@ -125,11 +126,19 @@ async function createRequest({ userId, addressId, pickupSlot, items }) {
     phone: user.phone,
     addressId: addressDoc._id,
     pickupSlot: pickupSlot || '',
+    paymentMethod: paymentMethod || 'cod',
     items,
     total,
     status: picked ? 'assigned' : 'pending',
     agentId: picked ? picked._id : null,
   });
+
+  // 6) Open a notification for this order, linked to the customer. It stays
+  // hidden in the feed until the order moves past pending/assigned (the feed
+  // reads the order's live status), so the record exists from the moment the
+  // order is placed.
+  await notificationRepo.create({ userId: user._id, orderId: req._id });
+
   // Return the order with its address populated so the caller gets the full,
   // ready-to-render address straight away.
   return requestRepo.findById(req._id);

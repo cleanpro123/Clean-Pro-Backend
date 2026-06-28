@@ -14,6 +14,8 @@ const createSchema = z.object({
     // view populates the full address from it.
     addressId: objectIdSchema,
     pickupSlot: z.string().optional(),
+    // Only cash on delivery is accepted right now; UPI/card are placeholders.
+    paymentMethod: z.enum(['cod', 'upi', 'card']).default('cod'),
     items: z.array(lineItem).min(1),
   }),
 });

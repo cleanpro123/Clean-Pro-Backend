@@ -48,6 +48,13 @@ const requestSchema = new mongoose.Schema(
     },
     items: { type: [lineItemSchema], default: [] },
     total: { type: Number, required: true, min: 0 },
+    // How the customer pays. Only cash on delivery is live today; UPI and card
+    // are reserved for when online payments go in.
+    paymentMethod: {
+      type: String,
+      enum: ['cod', 'upi', 'card'],
+      default: 'cod',
+    },
     status: {
       type: String,
       enum: REQUEST_STATUSES,

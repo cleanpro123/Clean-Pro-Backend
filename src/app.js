@@ -15,6 +15,7 @@ const offerRoutes = require('./interfaces/http/routes/offers.routes');
 const mapRoutes = require('./interfaces/http/routes/maps.routes');
 const requestRoutes = require('./interfaces/http/routes/requests.routes');
 const reviewRoutes = require('./interfaces/http/routes/reviews.routes');
+const notificationRoutes = require('./interfaces/http/routes/notifications.routes');
 
 function createApp() {
   const app = express();
@@ -37,6 +38,7 @@ function createApp() {
   app.use('/api/maps', mapRoutes);
   app.use('/api/requests', requestRoutes);
   app.use('/api/reviews', reviewRoutes);
+  app.use('/api/notifications', notificationRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
