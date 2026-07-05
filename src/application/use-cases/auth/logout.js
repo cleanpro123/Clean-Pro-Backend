@@ -2,7 +2,8 @@ const refreshTokenRepo = require('../../../infrastructure/db/repositories/refres
 
 async function logout({ refreshToken }) {
   if (!refreshToken) return;
-  await refreshTokenRepo.revokeByToken(refreshToken);
+  // Delete the session row outright so logout leaves no lingering token.
+  await refreshTokenRepo.deleteByToken(refreshToken);
 }
 
 module.exports = logout;

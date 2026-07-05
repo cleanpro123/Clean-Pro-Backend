@@ -18,7 +18,7 @@ async function refreshTokens({ refreshToken }) {
   try {
     decoded = verifyRefresh(refreshToken);
   } catch {
-    await refreshTokenRepo.revokeByToken(refreshToken);
+    await refreshTokenRepo.deleteByToken(refreshToken);
     throw AppError.unauthorized('Invalid refresh token');
   }
 
@@ -28,8 +28,8 @@ async function refreshTokens({ refreshToken }) {
   const subject = await repo.findById(decoded.sub);
   if (!subject) throw AppError.unauthorized();
 
-  // rotate: revoke old, issue new pair
-  await refreshTokenRepo.revokeByToken(refreshToken);
+  // rotate: delete old, issue new pair (no lingering revoked row)
+  await refreshTokenRepo.deleteByToken(refreshToken);
   const tokens = await issueTokens({
     subjectId: subject._id,
     role: decoded.role,

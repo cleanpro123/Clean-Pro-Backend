@@ -33,6 +33,10 @@ async function issueTokens({ subjectId, role, name }) {
     expiresAt,
   });
 
+  // Keep only the newest N sessions per subject so logging in repeatedly (or on
+  // many devices) can't grow the collection unbounded.
+  await refreshTokenRepo.enforceSessionCap(role, subjectId);
+
   return {
     accessToken,
     refreshToken,
