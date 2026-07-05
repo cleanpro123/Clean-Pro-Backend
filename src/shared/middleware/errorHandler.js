@@ -1,5 +1,6 @@
 const AppError = require('../errors/AppError');
 const logger = require('../../config/logger');
+const { captureError } = require('../../config/instrument');
 
 function notFound(_req, _res, next) {
   next(AppError.notFound('Route not found'));
@@ -34,6 +35,8 @@ function errorHandler(err, req, res, _next) {
 
   if (appErr.statusCode >= 500) {
     logger.error({ err, req: { method: req.method, url: req.originalUrl } });
+    // Report unexpected server errors to Sentry (no-op without a DSN).
+    captureError(err);
   } else {
     // 4xx are expected client errors (expired token, not-found route, failed
     // validation). Log at info so routine cases like token refresh don't read

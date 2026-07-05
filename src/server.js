@@ -1,3 +1,6 @@
+// Must be first so Sentry can instrument everything loaded after it.
+require('./config/instrument');
+
 const env = require('./config/env');
 const logger = require('./config/logger');
 const { connectDb, disconnectDb } = require('./config/db');
@@ -7,7 +10,7 @@ async function start() {
   await connectDb();
   const app = createApp();
   const server = app.listen(env.port, () => {
-    logger.info({ port: env.port, env: env.nodeEnv }, 'nutro-api listening');
+    logger.info({ port: env.port, env: env.nodeEnv }, 'clean-pro-api listening');
   });
 
   const shutdown = async (signal) => {
