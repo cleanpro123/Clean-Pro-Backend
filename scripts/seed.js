@@ -36,13 +36,13 @@ async function run() {
   ]);
 
   await Admin.create({
-    name: 'Nutro Admin',
-    email: 'admin@nutro.in',
+    name: 'Clean Pro Admin',
+    email: 'admin@cleanpro.in',
     passwordHash: await hashPassword('admin@1234'),
   });
 
   console.log('Clean DB ready.');
-  console.log('  admin@nutro.in / admin@1234');
+  console.log('  admin@cleanpro.in / admin@1234');
   console.log('Run `npm run populate` to add demo data through the API.');
   await mongoose.disconnect();
 }

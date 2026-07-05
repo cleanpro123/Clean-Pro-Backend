@@ -1,6 +1,6 @@
-# Nutro API
+# Clean Pro API
 
-Node.js + Express + MongoDB backend for the Nutro laundry app — user, agent, and admin sides.
+Node.js + Express + MongoDB backend for the Clean Pro laundry app — user, agent, and admin sides.
 
 ## Stack
 
@@ -44,9 +44,9 @@ curl localhost:4000/health
 
 | Role  | Email              | Password    |
 | ----- | ------------------ | ----------- |
-| admin | admin@nutro.in     | admin@1234  |
+| admin | admin@cleanpro.in     | admin@1234  |
 | user  | aisha@example.com  | user@1234   |
-| agent | suresh@nutro.in    | agent@1234  |
+| agent | suresh@cleanpro.in    | agent@1234  |
 
 ## Auth
 

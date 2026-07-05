@@ -42,7 +42,7 @@ async function login(role, email, password) {
 
 async function main() {
   console.log('▶ Logging in as admin');
-  const a = await login('admin', 'admin@nutro.in', 'admin@1234');
+  const a = await login('admin', 'admin@cleanpro.in', 'admin@1234');
   adminToken = a.token;
 
   console.log('▶ Creating services');
@@ -104,7 +104,7 @@ async function main() {
     {
       name: 'Suresh K.',
       phone: '+919999988888',
-      email: 'suresh@nutro.in',
+      email: 'suresh@cleanpro.in',
       password: 'agent@1234',
       place: '12 Marine Drive, Kochi',
       zone: 'Kochi Central',
@@ -113,7 +113,7 @@ async function main() {
     {
       name: 'Anand P.',
       phone: '+919876512345',
-      email: 'anand@nutro.in',
+      email: 'anand@cleanpro.in',
       password: 'agent@1234',
       place: '88 Panampilly Nagar, Kochi',
       zone: 'Edappally',
