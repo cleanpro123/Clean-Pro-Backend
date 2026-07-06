@@ -5,7 +5,7 @@ const logger = require('./logger');
 mongoose.set('strictQuery', true);
 
 async function connectDb() {
-  try {
+  try { 
     await mongoose.connect(env.mongoUri);
     logger.info({ uri: env.mongoUri }, 'mongo connected');
   } catch (err) {
@@ -13,6 +13,7 @@ async function connectDb() {
     throw err;
   }
 }
+
 
 async function disconnectDb() {
   await mongoose.disconnect();
