@@ -4,7 +4,6 @@ const crypto = require('crypto');
 function generateCode(length = 6) {
   let code = '';
   for (let i = 0; i < length; i += 1) code += crypto.randomInt(0, 10);
-  console.log('1111111111 Generated OTP code:', code); // For testing purposes, remove in production
   return code;
 }
 

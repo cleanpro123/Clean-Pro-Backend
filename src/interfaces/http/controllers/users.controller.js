@@ -5,6 +5,7 @@ const userRepo = require('../../../infrastructure/db/repositories/userRepository
 const addressRepo = require('../../../infrastructure/db/repositories/addressRepository');
 const addAddress = require('../../../application/use-cases/users/addAddress');
 const removeAddress = require('../../../application/use-cases/users/removeAddress');
+const changeEmail = require('../../../application/use-cases/users/changeEmail');
 
 exports.list = asyncHandler(async (req, res) => {
   const page = Number(req.query.page || 1);
@@ -61,6 +62,13 @@ exports.updateMe = asyncHandler(async (req, res) => {
   // through this profile patch.
   const { addresses, ...patch } = req.body;
   const user = await userRepo.updateById(req.user.id, patch);
+  ok(res, user);
+});
+
+// Change the login email. The new address must already be OTP-verified
+// (client flow: /auth/otp/request?purpose=change-email → /auth/otp/verify).
+exports.changeEmail = asyncHandler(async (req, res) => {
+  const user = await changeEmail({ userId: req.user.id, email: req.body.email });
   ok(res, user);
 });
 

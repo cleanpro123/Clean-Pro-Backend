@@ -29,6 +29,13 @@ const setApprovalSchema = z.object({
 const updateMeSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(80).optional(),
+    avatar: z.string().max(2048).optional(),
+  }),
+});
+
+const changeEmailSchema = z.object({
+  body: z.object({
+    email: z.string().email(),
   }),
 });
 
@@ -60,6 +67,7 @@ module.exports = {
   setStatusSchema,
   setApprovalSchema,
   updateMeSchema,
+  changeEmailSchema,
   addAddressSchema,
   addressIdParamSchema,
 };

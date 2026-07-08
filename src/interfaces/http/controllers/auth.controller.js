@@ -3,6 +3,8 @@ const { ok, created } = require('../../../shared/utils/respond');
 const registerUser = require('../../../application/use-cases/auth/registerUser');
 const requestEmailOtp = require('../../../application/use-cases/auth/requestEmailOtp');
 const verifyEmailOtp = require('../../../application/use-cases/auth/verifyEmailOtp');
+const resetPassword = require('../../../application/use-cases/auth/resetPassword');
+const checkAvailability = require('../../../application/use-cases/auth/checkAvailability');
 const login = require('../../../application/use-cases/auth/login');
 const refreshTokens = require('../../../application/use-cases/auth/refreshTokens');
 const logout = require('../../../application/use-cases/auth/logout');
@@ -29,6 +31,16 @@ exports.register = asyncHandler(async (req, res) => {
     return created(res, { pending: true, profile: result.user });
   }
   created(res, { profile: result.user, tokens: result.tokens });
+});
+
+exports.resetPassword = asyncHandler(async (req, res) => {
+  const result = await resetPassword(req.body);
+  ok(res, result);
+});
+
+exports.availability = asyncHandler(async (req, res) => {
+  const result = await checkAvailability(req.body);
+  ok(res, result);
 });
 
 exports.loginUser = asyncHandler(async (req, res) => {

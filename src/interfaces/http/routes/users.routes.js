@@ -9,6 +9,7 @@ const {
   setStatusSchema,
   setApprovalSchema,
   updateMeSchema,
+  changeEmailSchema,
   addAddressSchema,
   addressIdParamSchema,
 } = require('../../../shared/validators/users.schemas');
@@ -18,6 +19,12 @@ router.use(authenticate);
 // User self
 router.get('/me', requireRole('user'), ctrl.me);
 router.patch('/me', requireRole('user'), validate(updateMeSchema), ctrl.updateMe);
+router.patch(
+  '/me/email',
+  requireRole('user'),
+  validate(changeEmailSchema),
+  ctrl.changeEmail
+);
 
 // User self — addresses (separate Address collection)
 router.get('/me/addresses', requireRole('user'), ctrl.listAddresses);
