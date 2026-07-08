@@ -1,13 +1,34 @@
 const rateLimit = require('express-rate-limit');
 
+// Turn a seconds count into a friendly "X minutes" / "X seconds" phrase.
+function formatWait(seconds) {
+  if (!seconds || seconds < 1) return null;
+  if (seconds < 60) return `${seconds} second${seconds === 1 ? '' : 's'}`;
+  const mins = Math.ceil(seconds / 60);
+  return `${mins} minute${mins === 1 ? '' : 's'}`;
+}
+
 // Emit a rejection in the same { ok, error } envelope the rest of the API uses,
 // so the client's apiRequest() surfaces a clean message instead of a raw 429.
-function limitHandler(_req, res) {
+// The message tells the user exactly how long to wait, derived from the
+// limiter's own reset time (also exposed via the standard Retry-After header).
+function limitHandler(req, res) {
+  const resetTime = req.rateLimit?.resetTime;
+  const waitSeconds =
+    resetTime instanceof Date
+      ? Math.max(1, Math.ceil((resetTime.getTime() - Date.now()) / 1000))
+      : null;
+  const wait = formatWait(waitSeconds);
+
+  if (waitSeconds) res.set('Retry-After', String(waitSeconds));
   res.status(429).json({
     ok: false,
     error: {
       code: 'RATE_LIMITED',
-      message: 'Too many attempts. Please wait a moment and try again.',
+      message: wait
+        ? `Too many attempts. Please try again in ${wait}.`
+        : 'Too many attempts. Please wait a moment and try again.',
+      retryAfterSeconds: waitSeconds || undefined,
     },
   });
 }
