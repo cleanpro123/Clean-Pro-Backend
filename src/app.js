@@ -10,6 +10,7 @@ const { globalLimiter } = require('./interfaces/http/middleware/rateLimit');
 
 const authRoutes = require('./interfaces/http/routes/auth.routes');
 const userRoutes = require('./interfaces/http/routes/users.routes');
+const adminRoutes = require('./interfaces/http/routes/admins.routes');
 const agentRoutes = require('./interfaces/http/routes/agents.routes');
 const serviceRoutes = require('./interfaces/http/routes/services.routes');
 const itemRoutes = require('./interfaces/http/routes/items.routes');
@@ -51,6 +52,7 @@ function createApp() {
 
   app.use('/api/auth', authRoutes);
   app.use('/api/users', userRoutes);
+  app.use('/api/admins', adminRoutes);
   app.use('/api/agents', agentRoutes);
   app.use('/api/services', serviceRoutes);
   app.use('/api/items', itemRoutes);
