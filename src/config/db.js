@@ -4,10 +4,20 @@ const logger = require('./logger');
 
 mongoose.set('strictQuery', true);
 
+// Host + db name only — never log the full URI, which carries the credentials.
+function safeMongoTarget(uri) {
+  try {
+    const u = new URL(uri);
+    return `${u.host}${u.pathname}`;
+  } catch {
+    return 'configured';
+  }
+}
+
 async function connectDb() {
-  try { 
+  try {
     await mongoose.connect(env.mongoUri);
-    logger.info({ uri: env.mongoUri }, 'mongo connected');
+    logger.info({ target: safeMongoTarget(env.mongoUri) }, 'mongo connected');
   } catch (err) {
     logger.error({ err }, 'mongo connection failed');
     throw err;
