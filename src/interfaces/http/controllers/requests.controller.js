@@ -5,6 +5,7 @@ const requestRepo = require('../../../infrastructure/db/repositories/requestRepo
 const agentRepo = require('../../../infrastructure/db/repositories/agentRepository');
 const createRequest = require('../../../application/use-cases/requests/createRequest');
 const transitionStatus = require('../../../application/use-cases/requests/transitionStatus');
+const getRequestStats = require('../../../application/use-cases/requests/getRequestStats');
 
 function paginate(req) {
   const page = Number(req.query.page || 1);
@@ -56,6 +57,15 @@ exports.adminList = asyncHandler(async (req, res) => {
     requestRepo.count(filter),
   ]);
   ok(res, items, { page, limit, total });
+});
+
+// STATS (admin) — server-side revenue/order counts for a date window, with an
+// optional previous window for comparison and optional per-agent scoping. The
+// validator has already coerced from/to/prevFrom/prevTo into Date objects.
+exports.adminStats = asyncHandler(async (req, res) => {
+  const { from, to, prevFrom, prevTo, agentId } = req.query;
+  const result = await getRequestStats({ from, to, prevFrom, prevTo, agentId });
+  ok(res, result);
 });
 
 // ── Common ──

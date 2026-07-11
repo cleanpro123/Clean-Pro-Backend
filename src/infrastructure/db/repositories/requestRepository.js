@@ -1,7 +1,43 @@
+const mongoose = require('mongoose');
 const Request = require('../models/Request');
+
+// Aggregate order counts + delivered revenue for a single date window, filtered
+// by placedAt. Done in the DB so date filtering (custom day / last year) doesn't
+// depend on the client having fetched every order. Optionally scoped to an agent.
+async function statsFor({ from, to, agentId } = {}) {
+  const match = {};
+  // Coerce to Date here: under Express 5 the validate middleware can't write
+  // coerced values back onto the read-only req.query, so from/to may arrive as
+  // ISO strings. A string $gte never matches a Date field → 0 results.
+  if (from || to) {
+    match.placedAt = {};
+    if (from) match.placedAt.$gte = new Date(from);
+    if (to) match.placedAt.$lt = new Date(to);
+  }
+  if (agentId) match.agentId = new mongoose.Types.ObjectId(agentId);
+
+  const isDelivered = { $eq: ['$status', 'delivered'] };
+  const [row] = await Request.aggregate([
+    { $match: match },
+    {
+      $group: {
+        _id: null,
+        orders: { $sum: 1 },
+        delivered: { $sum: { $cond: [isDelivered, 1, 0] } },
+        revenue: { $sum: { $cond: [isDelivered, '$total', 0] } },
+      },
+    },
+  ]);
+  return {
+    orders: row?.orders || 0,
+    delivered: row?.delivered || 0,
+    revenue: row?.revenue || 0,
+  };
+}
 
 module.exports = {
   STATUSES: Request.STATUSES,
+  statsFor,
   // Reads expand addressId into the full Address document so the user, agent
   // and admin views can render the complete pickup address from the link.
   list: ({ filter = {}, skip = 0, limit = 50 } = {}) =>

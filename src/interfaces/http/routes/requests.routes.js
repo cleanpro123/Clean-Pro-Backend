@@ -6,6 +6,7 @@ const ctrl = require('../controllers/requests.controller');
 const {
   createSchema,
   listSchema,
+  statsSchema,
   idParamSchema,
   setStatusSchema,
   assignSchema,
@@ -35,6 +36,8 @@ router.get(
 );
 
 // Admin
+// NOTE: /stats must be declared before /:id, else "stats" is matched as an id.
+router.get('/stats', requireRole('admin'), validate(statsSchema), ctrl.adminStats);
 router.get('/', requireRole('admin'), validate(listSchema), ctrl.adminList);
 router.post(
   '/:id/assign',

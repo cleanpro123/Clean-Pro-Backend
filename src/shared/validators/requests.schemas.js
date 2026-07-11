@@ -30,6 +30,19 @@ const listSchema = z.object({
   }),
 });
 
+// Date-window stats. from/to bound the main window; prevFrom/prevTo an optional
+// comparison window. Coerced to Date so the controller/aggregation get real
+// Dates. agentId optionally scopes the stats to one agent.
+const statsSchema = z.object({
+  query: z.object({
+    from: z.coerce.date().optional(),
+    to: z.coerce.date().optional(),
+    prevFrom: z.coerce.date().optional(),
+    prevTo: z.coerce.date().optional(),
+    agentId: objectIdSchema.optional(),
+  }),
+});
+
 const setStatusSchema = z.object({
   params: z.object({ id: objectIdSchema }),
   body: z.object({
@@ -54,6 +67,7 @@ module.exports = {
   createSchema,
   idParamSchema,
   listSchema,
+  statsSchema,
   setStatusSchema,
   assignSchema,
 };
