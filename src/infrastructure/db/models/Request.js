@@ -35,8 +35,8 @@ const requestSchema = new mongoose.Schema(
       default: null,
       index: true,
     },
-    customerName: { type: String, required: true },
-    phone: { type: String, required: true },
+    // Customer name/phone are NOT stored on the order — reads populate them from
+    // the linked user account (userId) so there's a single source of truth.
     // The chosen pickup address — a reference to the customer's Address
     // document. Reads populate it so every view renders the full, up-to-date
     // address from this single source of truth.
@@ -62,6 +62,8 @@ const requestSchema = new mongoose.Schema(
       index: true,
     },
     pickupSlot: { type: String, default: '' },
+    // Optional free-text note from the customer for the pickup/delivery agent.
+    note: { type: String, default: '', maxlength: 500 },
     placedAt: { type: Date, default: Date.now },
   },
   { timestamps: true }

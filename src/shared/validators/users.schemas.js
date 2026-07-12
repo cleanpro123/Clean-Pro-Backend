@@ -4,9 +4,7 @@ const { objectIdSchema } = require('./common.schemas');
 const listSchema = z.object({
   query: z.object({
     q: z.string().optional(),
-    status: z.enum(['active', 'blocked']).optional(),
-    accountType: z.enum(['personal', 'business']).optional(),
-    approvalStatus: z.enum(['approved', 'pending', 'rejected']).optional(),
+    status: z.enum(['active', 'blocked', 'deactivated']).optional(),
     page: z.coerce.number().int().min(1).optional(),
     limit: z.coerce.number().int().min(1).max(100).optional(),
   }),
@@ -21,11 +19,6 @@ const setStatusSchema = z.object({
   body: z.object({ status: z.enum(['active', 'blocked']) }),
 });
 
-const setApprovalSchema = z.object({
-  params: z.object({ id: objectIdSchema }),
-  body: z.object({ approvalStatus: z.enum(['approved', 'rejected']) }),
-});
-
 const updateMeSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(80).optional(),
@@ -36,6 +29,18 @@ const updateMeSchema = z.object({
 const changeEmailSchema = z.object({
   body: z.object({
     email: z.string().email(),
+  }),
+});
+
+const changePasswordSchema = z.object({
+  body: z.object({
+    currentPassword: z.string().min(1, 'Enter your current password'),
+    newPassword: z
+      .string()
+      .min(6, 'Password must be at least 6 characters')
+      .regex(/[A-Za-z]/, 'Password must include a letter')
+      .regex(/\d/, 'Password must include a number')
+      .regex(/[^A-Za-z0-9]/, 'Password must include a symbol (e.g. !@#$)'),
   }),
 });
 
@@ -53,6 +58,8 @@ const addAddressSchema = z.object({
     phone: z.string().optional(),
     areaId: objectIdSchema.optional(),
     area: z.string().optional(),
+    lat: z.number().min(-90).max(90).optional(),
+    lng: z.number().min(-180).max(180).optional(),
     isDefault: z.boolean().optional(),
   }),
 });
@@ -61,13 +68,35 @@ const addressIdParamSchema = z.object({
   params: z.object({ addressId: objectIdSchema }),
 });
 
+// Editing an existing address — same fields as create, all optional, with the
+// address id in the path.
+const updateAddressSchema = z.object({
+  params: z.object({ addressId: objectIdSchema }),
+  body: z.object({
+    label: z.string().optional(),
+    icon: z.string().optional(),
+    line: z.string().optional(),
+    line1: z.string().optional(),
+    line2: z.string().optional(),
+    city: z.string().optional(),
+    pincode: z.string().optional(),
+    phone: z.string().optional(),
+    areaId: objectIdSchema.optional(),
+    area: z.string().optional(),
+    lat: z.number().min(-90).max(90).optional(),
+    lng: z.number().min(-180).max(180).optional(),
+    isDefault: z.boolean().optional(),
+  }),
+});
+
 module.exports = {
   listSchema,
   idParamSchema,
   setStatusSchema,
-  setApprovalSchema,
   updateMeSchema,
   changeEmailSchema,
+  changePasswordSchema,
   addAddressSchema,
+  updateAddressSchema,
   addressIdParamSchema,
 };

@@ -38,21 +38,28 @@ async function statsFor({ from, to, agentId } = {}) {
 module.exports = {
   STATUSES: Request.STATUSES,
   statsFor,
-  // Reads expand addressId into the full Address document so the user, agent
-  // and admin views can render the complete pickup address from the link.
+  // Reads expand addressId into the full Address document, and userId into the
+  // customer's name/phone — the order no longer stores those, so every view
+  // renders the customer + address from these links (single source of truth).
   list: ({ filter = {}, skip = 0, limit = 50 } = {}) =>
     Request.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate('addressId'),
+      .populate('addressId')
+      .populate('userId', 'name phone avatar'),
   count: (filter = {}) => Request.countDocuments(filter),
-  findById: (id) => Request.findById(id).populate('addressId'),
+  findById: (id) =>
+    Request.findById(id).populate('addressId').populate('userId', 'name phone avatar'),
   create: (data) => Request.create(data),
   updateById: (id, patch) =>
     Request.findByIdAndUpdate(id, patch, {
       new: true,
       runValidators: true,
-    }).populate('addressId'),
+    })
+      .populate('addressId')
+      .populate('userId', 'name phone avatar'),
   deleteById: (id) => Request.findByIdAndDelete(id),
+  // Remove every order belonging to a user (used when the account is deleted).
+  deleteByUser: (userId) => Request.deleteMany({ userId }),
 };

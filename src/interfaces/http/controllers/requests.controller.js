@@ -5,6 +5,7 @@ const requestRepo = require('../../../infrastructure/db/repositories/requestRepo
 const agentRepo = require('../../../infrastructure/db/repositories/agentRepository');
 const createRequest = require('../../../application/use-cases/requests/createRequest');
 const transitionStatus = require('../../../application/use-cases/requests/transitionStatus');
+const updateRequestTotal = require('../../../application/use-cases/requests/updateRequestTotal');
 const getRequestStats = require('../../../application/use-cases/requests/getRequestStats');
 
 function paginate(req) {
@@ -73,7 +74,9 @@ exports.get = asyncHandler(async (req, res) => {
   const r = await requestRepo.findById(req.params.id);
   if (!r) throw AppError.notFound('Request not found');
 
-  if (req.user.role === 'user' && String(r.userId) !== req.user.id) {
+  // userId is populated on reads, so compare against its _id.
+  const ownerId = String(r.userId?._id || r.userId);
+  if (req.user.role === 'user' && ownerId !== req.user.id) {
     throw AppError.forbidden();
   }
   if (req.user.role === 'agent' && (!r.agentId || String(r.agentId) !== req.user.id)) {
@@ -87,6 +90,15 @@ exports.setStatus = asyncHandler(async (req, res) => {
   const r = await transitionStatus({
     id: req.params.id,
     status: req.body.status,
+    actor: req.user,
+  });
+  ok(res, r);
+});
+
+exports.updateTotal = asyncHandler(async (req, res) => {
+  const r = await updateRequestTotal({
+    id: req.params.id,
+    total: req.body.total,
     actor: req.user,
   });
   ok(res, r);

@@ -14,6 +14,8 @@ const createSchema = z.object({
     // view populates the full address from it.
     addressId: objectIdSchema,
     pickupSlot: z.string().optional(),
+    // Optional free-text note for the pickup/delivery agent.
+    note: z.string().max(500).optional(),
     // Only cash on delivery is accepted right now; UPI/card are placeholders.
     paymentMethod: z.enum(['cod', 'upi', 'card']).default('cod'),
     items: z.array(lineItem).min(1),
@@ -63,6 +65,12 @@ const assignSchema = z.object({
   body: z.object({ agentId: objectIdSchema }),
 });
 
+// Admin/agent adjust the order's total price (before delivery).
+const setTotalSchema = z.object({
+  params: z.object({ id: objectIdSchema }),
+  body: z.object({ total: z.number().nonnegative() }),
+});
+
 module.exports = {
   createSchema,
   idParamSchema,
@@ -70,4 +78,5 @@ module.exports = {
   statsSchema,
   setStatusSchema,
   assignSchema,
+  setTotalSchema,
 };

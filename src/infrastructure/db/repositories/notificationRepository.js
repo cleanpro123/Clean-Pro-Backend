@@ -13,4 +13,6 @@ module.exports = {
   findById: (id) => Notification.findById(id).populate('orderId'),
   create: (data) => Notification.create(data),
   deleteById: (id) => Notification.findByIdAndDelete(id),
+  // Remove every notification for a user (used when the account is deleted).
+  deleteByUser: (userId) => Notification.deleteMany({ userId }),
 };

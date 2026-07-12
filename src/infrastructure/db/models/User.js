@@ -1,17 +1,5 @@
 const mongoose = require('mongoose');
 
-const companySchema = new mongoose.Schema(
-  {
-    name: { type: String, trim: true },
-    // 'laundry_company' | 'clothing_company' | 'authority' | 'other'
-    businessType: { type: String },
-    registrationNo: { type: String, trim: true },
-    address: { type: String, trim: true },
-    website: { type: String, trim: true },
-  },
-  { _id: false }
-);
-
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -19,20 +7,6 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, index: true },
     passwordHash: { type: String, required: true },
     avatar: { type: String, default: '' },
-    accountType: {
-      type: String,
-      enum: ['personal', 'business'],
-      default: 'personal',
-      index: true,
-    },
-    // personal accounts are auto-approved; business accounts await admin review.
-    approvalStatus: {
-      type: String,
-      enum: ['approved', 'pending', 'rejected'],
-      default: 'approved',
-      index: true,
-    },
-    company: { type: companySchema, default: undefined },
     // Ordered references into the Address collection. Populate to expand into
     // full address documents.
     addresses: [
@@ -40,7 +14,9 @@ const userSchema = new mongoose.Schema(
     ],
     status: {
       type: String,
-      enum: ['active', 'blocked'],
+      // 'deactivated' = self-deactivated by the user; can only be reactivated
+      // by a branch/admin (the user cannot sign back in on their own).
+      enum: ['active', 'blocked', 'deactivated'],
       default: 'active',
       index: true,
     },

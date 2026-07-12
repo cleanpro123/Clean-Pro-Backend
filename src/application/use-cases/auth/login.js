@@ -22,19 +22,11 @@ async function login({ role, email, password }) {
     throw AppError.forbidden('This account has been blocked');
   }
 
-  // Business accounts awaiting / denied admin review can't sign in.
-  if (subject.approvalStatus === 'pending') {
-    throw new AppError(
-      'Your business account is pending admin approval',
-      403,
-      'PENDING_APPROVAL'
-    );
-  }
-  if (subject.approvalStatus === 'rejected') {
-    throw new AppError(
-      'Your business account request was not approved',
-      403,
-      'ACCOUNT_REJECTED'
+  // Self-deactivated accounts can only be reactivated by a branch — the user
+  // cannot sign back in on their own.
+  if (subject.status === 'deactivated') {
+    throw AppError.forbidden(
+      'Your account has been deactivated. Please contact your branch to reactivate it.'
     );
   }
 

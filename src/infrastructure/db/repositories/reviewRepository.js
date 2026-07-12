@@ -10,4 +10,6 @@ module.exports = {
   updateById: (id, patch) =>
     Review.findByIdAndUpdate(id, patch, { new: true, runValidators: true }),
   deleteById: (id) => Review.findByIdAndDelete(id),
+  // Remove every review written by a user (used when the account is deleted).
+  deleteByUser: (userId) => Review.deleteMany({ userId }),
 };

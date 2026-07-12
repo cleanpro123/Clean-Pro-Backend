@@ -7,10 +7,11 @@ const {
   listSchema,
   idParamSchema,
   setStatusSchema,
-  setApprovalSchema,
   updateMeSchema,
   changeEmailSchema,
+  changePasswordSchema,
   addAddressSchema,
+  updateAddressSchema,
   addressIdParamSchema,
 } = require('../../../shared/validators/users.schemas');
 
@@ -25,6 +26,15 @@ router.patch(
   validate(changeEmailSchema),
   ctrl.changeEmail
 );
+router.patch(
+  '/me/password',
+  requireRole('user'),
+  validate(changePasswordSchema),
+  ctrl.changePassword
+);
+// Privacy Center — self-service account actions.
+router.post('/me/deactivate', requireRole('user'), ctrl.deactivateMe);
+router.delete('/me', requireRole('user'), ctrl.deleteMe);
 
 // User self — addresses (separate Address collection)
 router.get('/me/addresses', requireRole('user'), ctrl.listAddresses);
@@ -33,6 +43,12 @@ router.post(
   requireRole('user'),
   validate(addAddressSchema),
   ctrl.addAddress
+);
+router.patch(
+  '/me/addresses/:addressId',
+  requireRole('user'),
+  validate(updateAddressSchema),
+  ctrl.updateAddress
 );
 router.delete(
   '/me/addresses/:addressId',
@@ -50,11 +66,6 @@ router.patch(
   validate(setStatusSchema),
   ctrl.setStatus
 );
-router.patch(
-  '/:id/approval',
-  requireRole('admin'),
-  validate(setApprovalSchema),
-  ctrl.setApproval
-);
+router.delete('/:id', requireRole('admin'), validate(idParamSchema), ctrl.remove);
 
 module.exports = router;

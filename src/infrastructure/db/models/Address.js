@@ -32,6 +32,10 @@ const addressSchema = new mongoose.Schema(
     // Snapshot of the area name so addresses stay readable even if an
     // area is later renamed or removed.
     area: { type: String, default: '' },
+    // Optional geo coordinates — set from device GPS or geocoding when the
+    // address is created, so the app can render a real map + marker.
+    lat: { type: Number, default: null },
+    lng: { type: Number, default: null },
     isDefault: { type: Boolean, default: false },
   },
   { timestamps: true }

@@ -6,11 +6,9 @@ module.exports = {
   findById: (id) => User.findById(id).populate('addresses'),
   findByEmail: (email) => User.findOne({ email: String(email).toLowerCase() }),
   findByPhone: (phone) => User.findOne({ phone }),
-  list: ({ status, accountType, approvalStatus, q, skip = 0, limit = 50 } = {}) => {
+  list: ({ status, q, skip = 0, limit = 50 } = {}) => {
     const filter = {};
     if (status) filter.status = status;
-    if (accountType) filter.accountType = accountType;
-    if (approvalStatus) filter.approvalStatus = approvalStatus;
     if (q) {
       const re = new RegExp(q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
       filter.$or = [{ name: re }, { email: re }, { phone: re }];
@@ -25,8 +23,7 @@ module.exports = {
     ),
   setStatus: (id, status) =>
     User.findByIdAndUpdate(id, { status }, { new: true }),
-  setApproval: (id, approvalStatus) =>
-    User.findByIdAndUpdate(id, { approvalStatus }, { new: true }),
+  remove: (id) => User.findByIdAndDelete(id),
   // Append/remove an Address id on the user's ordered addresses array.
   pushAddress: (id, addressId) =>
     User.findByIdAndUpdate(

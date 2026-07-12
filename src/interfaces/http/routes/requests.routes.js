@@ -10,6 +10,7 @@ const {
   idParamSchema,
   setStatusSchema,
   assignSchema,
+  setTotalSchema,
 } = require('../../../shared/validators/requests.schemas');
 
 router.use(authenticate);
@@ -58,6 +59,14 @@ router.patch(
   requireRole('agent', 'admin'),
   validate(setStatusSchema),
   ctrl.setStatus
+);
+// Adjust the order total (admin any order; agent only their assigned ones).
+// Blocked once the order is delivered/cancelled.
+router.patch(
+  '/:id/total',
+  requireRole('agent', 'admin'),
+  validate(setTotalSchema),
+  ctrl.updateTotal
 );
 
 module.exports = router;
