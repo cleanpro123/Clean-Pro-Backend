@@ -96,7 +96,7 @@ async function pickAgent(user, address) {
 // MAIN ORDER-CREATION USE CASE
 // Takes the customer's id and order details, validates the customer,
 // computes the price, auto-assigns a delivery agent, then saves the order.
-async function createRequest({ userId, addressId, pickupSlot, paymentMethod, items, note }) {
+async function createRequest({ userId, addressId, paymentMethod, items, note }) {
   // 1) Load the customer placing the order and make sure they're allowed to
   const user = await userRepo.findById(userId);
   if (!user) throw AppError.notFound('User not found');
@@ -123,7 +123,6 @@ async function createRequest({ userId, addressId, pickupSlot, paymentMethod, ite
     code: genCode(),
     userId: user._id,
     addressId: addressDoc._id,
-    pickupSlot: pickupSlot || '',
     note: (note || '').trim(),
     paymentMethod: paymentMethod || 'cod',
     items,

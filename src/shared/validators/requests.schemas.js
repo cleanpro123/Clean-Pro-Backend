@@ -13,7 +13,6 @@ const createSchema = z.object({
     // The order links to one of the customer's saved addresses by id; every
     // view populates the full address from it.
     addressId: objectIdSchema,
-    pickupSlot: z.string().optional(),
     // Optional free-text note for the pickup/delivery agent.
     note: z.string().max(500).optional(),
     // Only cash on delivery is accepted right now; UPI/card are placeholders.

@@ -175,7 +175,6 @@ async function main() {
     method: 'POST',
     body: {
       address: '12 Marine Drive, Kochi, 682001',
-      pickupSlot: 'Tomorrow · 10 – 12 PM',
       items: [
         { name: 'Shirt', qty: 3, price: 30, service: 'wash' },
         { name: 'Saree', qty: 1, price: 180, service: 'dry' },
@@ -188,7 +187,6 @@ async function main() {
     method: 'POST',
     body: {
       address: '88 Panampilly Nagar, Kochi, 682036',
-      pickupSlot: 'Today · 2 – 4 PM',
       items: [
         { name: 'Pants', qty: 2, price: 80, service: 'iron' },
         { name: 'Bedsheet', qty: 1, price: 50, service: 'wash' },

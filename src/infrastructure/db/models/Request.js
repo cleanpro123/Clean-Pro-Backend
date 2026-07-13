@@ -61,7 +61,6 @@ const requestSchema = new mongoose.Schema(
       default: 'pending',
       index: true,
     },
-    pickupSlot: { type: String, default: '' },
     // Optional free-text note from the customer for the pickup/delivery agent.
     note: { type: String, default: '', maxlength: 500 },
     placedAt: { type: Date, default: Date.now },
