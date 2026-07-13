@@ -14,9 +14,6 @@ async function registerUser({ name, phone, email, password, avatar }) {
   const existingEmail = await userRepo.findByEmail(email);
   if (existingEmail) throw AppError.conflict('Email already registered');
 
-  const existingPhone = await userRepo.findByPhone(phone);
-  if (existingPhone) throw AppError.conflict('Phone already registered');
-
   const passwordHash = await hashPassword(password);
   const user = await userRepo.create({
     name,

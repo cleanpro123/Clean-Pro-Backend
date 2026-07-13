@@ -53,17 +53,12 @@ const resetPasswordSchema = z.object({
   }),
 });
 
-// Pre-flight check used by the signup form to catch a taken email/phone before
-// sending an OTP. At least one of the two must be provided.
+// Pre-flight check used by the signup form to catch a taken email before
+// sending an OTP. Phone is not checked (numbers may be shared across accounts).
 const availabilitySchema = z.object({
-  body: z
-    .object({
-      email: z.string().email().optional(),
-      phone: z.string().min(7).max(20).optional(),
-    })
-    .refine((data) => data.email || data.phone, {
-      message: 'Provide an email or phone to check',
-    }),
+  body: z.object({
+    email: z.string().email(),
+  }),
 });
 
 module.exports = {

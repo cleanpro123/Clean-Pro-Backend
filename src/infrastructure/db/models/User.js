@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    phone: { type: String, required: true, unique: true, index: true },
+    // Phone is validated for format but NOT unique — multiple accounts may
+    // share a number (e.g. family members). See scripts/drop-phone-index.js
+    // to drop the legacy unique index from an existing database.
+    phone: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true, index: true },
     passwordHash: { type: String, required: true },
     avatar: { type: String, default: '' },
