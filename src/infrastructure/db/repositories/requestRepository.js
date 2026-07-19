@@ -47,10 +47,14 @@ module.exports = {
       .skip(skip)
       .limit(limit)
       .populate('addressId')
-      .populate('userId', 'name phone avatar'),
+      .populate('userId', 'name phone avatar')
+      .populate('agentId', 'name phone vehicle'),
   count: (filter = {}) => Request.countDocuments(filter),
   findById: (id) =>
-    Request.findById(id).populate('addressId').populate('userId', 'name phone avatar'),
+    Request.findById(id)
+      .populate('addressId')
+      .populate('userId', 'name phone avatar')
+      .populate('agentId', 'name phone vehicle'),
   create: (data) => Request.create(data),
   updateById: (id, patch) =>
     Request.findByIdAndUpdate(id, patch, {
@@ -58,7 +62,8 @@ module.exports = {
       runValidators: true,
     })
       .populate('addressId')
-      .populate('userId', 'name phone avatar'),
+      .populate('userId', 'name phone avatar')
+      .populate('agentId', 'name phone vehicle'),
   deleteById: (id) => Request.findByIdAndDelete(id),
   // Remove every order belonging to a user (used when the account is deleted).
   deleteByUser: (userId) => Request.deleteMany({ userId }),
