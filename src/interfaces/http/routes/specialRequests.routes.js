@@ -9,6 +9,7 @@ const {
   idParamSchema,
   setStatusSchema,
   assignSchema,
+  setTotalSchema,
 } = require('../../../shared/validators/specialRequests.schemas');
 
 router.use(authenticate);
@@ -36,6 +37,12 @@ router.patch(
   requireRole('agent', 'admin'),
   validate(setStatusSchema),
   ctrl.setStatus
+);
+router.patch(
+  '/:id/total',
+  requireRole('agent', 'admin'),
+  validate(setTotalSchema),
+  ctrl.updateTotal
 );
 
 module.exports = router;

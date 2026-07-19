@@ -81,6 +81,19 @@ exports.setStatus = asyncHandler(async (req, res) => {
   ok(res, r);
 });
 
+exports.updateTotal = asyncHandler(async (req, res) => {
+  const existing = await specialRepo.findById(req.params.id);
+  if (!existing) throw AppError.notFound('Special order not found');
+  if (
+    req.user.role === 'agent' &&
+    (!existing.agentId || String(existing.agentId?._id || existing.agentId) !== req.user.id)
+  ) {
+    throw AppError.forbidden();
+  }
+  const r = await specialRepo.updateById(req.params.id, { total: req.body.total });
+  ok(res, r);
+});
+
 exports.assignAgent = asyncHandler(async (req, res) => {
   const agent = await agentRepo.findById(req.body.agentId);
   if (!agent) throw AppError.notFound('Agent not found');

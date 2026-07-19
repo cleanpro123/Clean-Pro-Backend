@@ -42,10 +42,16 @@ const assignSchema = z.object({
   body: z.object({ agentId: objectIdSchema }),
 });
 
+const setTotalSchema = z.object({
+  params: z.object({ id: objectIdSchema }),
+  body: z.object({ total: z.number().nonnegative() }),
+});
+
 module.exports = {
   createSchema,
   idParamSchema,
   listSchema,
   setStatusSchema,
   assignSchema,
+  setTotalSchema,
 };
