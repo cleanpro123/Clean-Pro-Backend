@@ -45,6 +45,13 @@ exports.setStatus = asyncHandler(async (req, res) => {
   ok(res, user);
 });
 
+// Admin — mark a customer as special (VIP) or normal.
+exports.setSpecial = asyncHandler(async (req, res) => {
+  const user = await userRepo.setSpecial(req.params.id, req.body.isSpecial);
+  if (!user) throw AppError.notFound('User not found');
+  ok(res, user);
+});
+
 exports.me = asyncHandler(async (req, res) => {
   const user = await userRepo.findById(req.user.id);
   if (!user) throw AppError.notFound();

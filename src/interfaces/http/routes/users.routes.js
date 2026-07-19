@@ -7,6 +7,7 @@ const {
   listSchema,
   idParamSchema,
   setStatusSchema,
+  setSpecialSchema,
   updateMeSchema,
   changeEmailSchema,
   changePasswordSchema,
@@ -65,6 +66,12 @@ router.patch(
   requireRole('admin'),
   validate(setStatusSchema),
   ctrl.setStatus
+);
+router.patch(
+  '/:id/special',
+  requireRole('admin'),
+  validate(setSpecialSchema),
+  ctrl.setSpecial
 );
 router.delete('/:id', requireRole('admin'), validate(idParamSchema), ctrl.remove);
 

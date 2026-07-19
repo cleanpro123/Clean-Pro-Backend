@@ -23,6 +23,8 @@ module.exports = {
     ),
   setStatus: (id, status) =>
     User.findByIdAndUpdate(id, { status }, { new: true }),
+  setSpecial: (id, isSpecial) =>
+    User.findByIdAndUpdate(id, { isSpecial }, { new: true }),
   remove: (id) => User.findByIdAndDelete(id),
   // Append/remove an Address id on the user's ordered addresses array.
   pushAddress: (id, addressId) =>

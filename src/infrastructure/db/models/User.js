@@ -10,6 +10,9 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, index: true },
     passwordHash: { type: String, required: true },
     avatar: { type: String, default: '' },
+    // Special / VIP customer flag, toggled by admins from the user detail
+    // screen. Normal users are false; "special list" = users with this true.
+    isSpecial: { type: Boolean, default: false, index: true },
     // Ordered references into the Address collection. Populate to expand into
     // full address documents.
     addresses: [

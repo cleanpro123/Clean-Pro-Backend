@@ -19,6 +19,11 @@ const setStatusSchema = z.object({
   body: z.object({ status: z.enum(['active', 'blocked']) }),
 });
 
+const setSpecialSchema = z.object({
+  params: z.object({ id: objectIdSchema }),
+  body: z.object({ isSpecial: z.boolean() }),
+});
+
 const updateMeSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(80).optional(),
@@ -93,6 +98,7 @@ module.exports = {
   listSchema,
   idParamSchema,
   setStatusSchema,
+  setSpecialSchema,
   updateMeSchema,
   changeEmailSchema,
   changePasswordSchema,
