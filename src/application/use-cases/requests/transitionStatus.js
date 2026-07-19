@@ -3,8 +3,7 @@ const requestRepo = require('../../../infrastructure/db/repositories/requestRepo
 
 // What status moves are allowed from any given status.
 const transitions = {
-  pending: ['accepted', 'assigned', 'cancelled'],
-  assigned: ['accepted', 'in_progress', 'cancelled'],
+  pending: ['accepted', 'cancelled'],
   accepted: ['in_progress', 'cancelled'],
   in_progress: ['out_for_delivery', 'cancelled'],
   out_for_delivery: ['delivered'],

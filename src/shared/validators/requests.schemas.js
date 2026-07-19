@@ -50,7 +50,6 @@ const setStatusSchema = z.object({
     status: z.enum([
       'pending',
       'accepted',
-      'assigned',
       'in_progress',
       'out_for_delivery',
       'delivered',

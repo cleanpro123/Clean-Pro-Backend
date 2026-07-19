@@ -107,9 +107,11 @@ exports.updateTotal = asyncHandler(async (req, res) => {
 exports.assignAgent = asyncHandler(async (req, res) => {
   const agent = await agentRepo.findById(req.body.agentId);
   if (!agent) throw AppError.notFound('Agent not found');
+  // Assigning (or reassigning) an agent only sets agentId — it does NOT change
+  // the order status. A freshly placed order stays `pending` until the agent or
+  // an admin explicitly accepts it.
   const r = await requestRepo.updateById(req.params.id, {
     agentId: agent._id,
-    status: 'assigned',
   });
   if (!r) throw AppError.notFound('Request not found');
   ok(res, r);

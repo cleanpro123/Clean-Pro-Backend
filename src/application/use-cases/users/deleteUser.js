@@ -2,6 +2,7 @@ const AppError = require('../../../shared/errors/AppError');
 const userRepo = require('../../../infrastructure/db/repositories/userRepository');
 const addressRepo = require('../../../infrastructure/db/repositories/addressRepository');
 const requestRepo = require('../../../infrastructure/db/repositories/requestRepository');
+const specialRequestRepo = require('../../../infrastructure/db/repositories/specialRequestRepository');
 const reviewRepo = require('../../../infrastructure/db/repositories/reviewRepository');
 const notificationRepo = require('../../../infrastructure/db/repositories/notificationRepository');
 const refreshTokenRepo = require('../../../infrastructure/db/repositories/refreshTokenRepository');
@@ -20,6 +21,7 @@ async function deleteUser(userId) {
   // Clear all related collections first, then the user record itself.
   await Promise.all([
     requestRepo.deleteByUser(userId),
+    specialRequestRepo.deleteByUser(userId),
     addressRepo.deleteByUser(userId),
     reviewRepo.deleteByUser(userId),
     notificationRepo.deleteByUser(userId),

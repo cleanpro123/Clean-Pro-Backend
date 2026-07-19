@@ -17,6 +17,7 @@ const itemRoutes = require('./interfaces/http/routes/items.routes');
 const offerRoutes = require('./interfaces/http/routes/offers.routes');
 const mapRoutes = require('./interfaces/http/routes/maps.routes');
 const requestRoutes = require('./interfaces/http/routes/requests.routes');
+const specialRequestRoutes = require('./interfaces/http/routes/specialRequests.routes');
 const reviewRoutes = require('./interfaces/http/routes/reviews.routes');
 const notificationRoutes = require('./interfaces/http/routes/notifications.routes');
 
@@ -59,6 +60,7 @@ function createApp() {
   app.use('/api/offers', offerRoutes);
   app.use('/api/maps', mapRoutes);
   app.use('/api/requests', requestRoutes);
+  app.use('/api/special-requests', specialRequestRoutes);
   app.use('/api/reviews', reviewRoutes);
   app.use('/api/notifications', notificationRoutes);
 

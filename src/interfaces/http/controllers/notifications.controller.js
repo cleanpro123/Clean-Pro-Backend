@@ -5,7 +5,7 @@ const notificationRepo = require('../../../infrastructure/db/repositories/notifi
 // Statuses to hide from the feed: the order hasn't been accepted by an agent
 // yet, so there's nothing to notify the customer about. Everything from
 // "accepted" onward is shown.
-const HIDDEN_STATUSES = new Set(['pending', 'assigned']);
+const HIDDEN_STATUSES = new Set(['pending']);
 
 // LIST MY NOTIFICATIONS  →  GET /api/notifications/mine
 exports.userList = asyncHandler(async (req, res) => {

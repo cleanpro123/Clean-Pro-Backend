@@ -13,7 +13,6 @@ const lineItemSchema = new mongoose.Schema(
 const REQUEST_STATUSES = [
   'pending',
   'accepted',
-  'assigned',
   'in_progress',
   'out_for_delivery',
   'delivered',
