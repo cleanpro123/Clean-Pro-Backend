@@ -10,13 +10,13 @@ module.exports = {
       .skip(skip)
       .limit(limit)
       .populate('addressId')
-      .populate('userId', 'name phone avatar')
+      .populate('userId', 'name phone avatar isSpecial')
       .populate('agentId', 'name phone vehicle'),
   count: (filter = {}) => SpecialRequest.countDocuments(filter),
   findById: (id) =>
     SpecialRequest.findById(id)
       .populate('addressId')
-      .populate('userId', 'name phone avatar')
+      .populate('userId', 'name phone avatar isSpecial')
       .populate('agentId', 'name phone vehicle'),
   create: (data) => SpecialRequest.create(data),
   updateById: (id, patch) =>
@@ -25,7 +25,7 @@ module.exports = {
       runValidators: true,
     })
       .populate('addressId')
-      .populate('userId', 'name phone avatar')
+      .populate('userId', 'name phone avatar isSpecial')
       .populate('agentId', 'name phone vehicle'),
   deleteById: (id) => SpecialRequest.findByIdAndDelete(id),
   deleteByUser: (userId) => SpecialRequest.deleteMany({ userId }),
