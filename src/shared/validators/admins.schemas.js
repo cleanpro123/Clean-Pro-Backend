@@ -1,11 +1,13 @@
 const { z } = require('zod');
+const { staffOtpCode } = require('./staffOtp.schemas');
 const { objectIdSchema } = require('./common.schemas');
 
 const createSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(80),
-    email: z.string().email(),
+    email: z.string().trim().toLowerCase().email(),
     password: z.string().min(6),
+    otpCode: staffOtpCode,
   }),
 });
 

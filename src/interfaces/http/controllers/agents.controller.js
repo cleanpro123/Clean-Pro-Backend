@@ -4,6 +4,11 @@ const AppError = require('../../../shared/errors/AppError');
 const agentRepo = require('../../../infrastructure/db/repositories/agentRepository');
 const mapRepo = require('../../../infrastructure/db/repositories/mapRepository');
 const { hashPassword } = require('../../../infrastructure/security/password');
+const staffOtp = require('../../../application/use-cases/auth/staffOtp');
+
+exports.requestOtp = asyncHandler(async (req, res) => {
+  ok(res, await staffOtp.request({ email: req.body.email, role: 'agent', requestedBy: req.user.id }));
+});
 
 // If a mapId is supplied, look up the map and overwrite the agent's place
 // + zone with the map's textual location. Returns a sanitized patch ready
@@ -36,9 +41,11 @@ exports.get = asyncHandler(async (req, res) => {
 });
 
 exports.create = asyncHandler(async (req, res) => {
-  const { password, ...rest } = req.body;
+  const { password, otpCode, ...rest } = req.body;
+  if (await agentRepo.findByEmail(rest.email)) throw AppError.conflict('This email is already registered');
   const patch = await applyMap(rest);
   const passwordHash = await hashPassword(password);
+  await staffOtp.consume({ email: rest.email, role: 'agent', requestedBy: req.user.id, otpCode });
   const a = await agentRepo.create({ ...patch, passwordHash });
   created(res, a);
 });

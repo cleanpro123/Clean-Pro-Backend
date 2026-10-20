@@ -15,6 +15,7 @@ const createSchema = z.object({
     addressId: objectIdSchema,
     // Optional free-text note for the pickup/delivery agent.
     note: z.string().max(500).optional(),
+    delivery: z.enum(['normal', 'fast']).default('normal'),
     // Only cash on delivery is accepted right now; UPI/card are placeholders.
     paymentMethod: z.enum(['cod', 'upi', 'card']).default('cod'),
     items: z.array(lineItem).min(1),

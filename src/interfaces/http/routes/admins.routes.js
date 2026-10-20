@@ -3,6 +3,8 @@ const validate = require('../../../shared/middleware/validate');
 const authenticate = require('../middleware/authenticate');
 const requireRole = require('../middleware/requireRole');
 const ctrl = require('../controllers/admins.controller');
+const { otpRequestLimiter } = require('../middleware/rateLimit');
+const { requestStaffOtpSchema } = require('../../../shared/validators/staffOtp.schemas');
 const {
   createSchema,
   updateSchema,
@@ -11,6 +13,8 @@ const {
 } = require('../../../shared/validators/admins.schemas');
 
 router.use(authenticate);
+
+router.post('/otp/request', requireRole('admin'), otpRequestLimiter, validate(requestStaffOtpSchema), ctrl.requestOtp);
 
 router.get('/', requireRole('admin'), validate(listSchema), ctrl.list);
 router.post('/', requireRole('admin'), validate(createSchema), ctrl.create);

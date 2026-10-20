@@ -47,6 +47,8 @@ const requestSchema = new mongoose.Schema(
     },
     items: { type: [lineItemSchema], default: [] },
     total: { type: Number, required: true, min: 0 },
+    delivery: { type: String, enum: ['normal', 'fast'], default: 'normal' },
+    deliveryFee: { type: Number, min: 0, default: 0 },
     // How the customer pays. Only cash on delivery is live today; UPI and card
     // are reserved for when online payments go in.
     paymentMethod: {

@@ -77,6 +77,18 @@ exports.setStatus = asyncHandler(async (req, res) => {
   ) {
     throw AppError.forbidden();
   }
+  if (existing.status === req.body.status) return ok(res, existing);
+  const transitions = {
+    pending: ['accepted', 'cancelled'],
+    accepted: ['in_progress', 'cancelled'],
+    in_progress: ['out_for_delivery', 'cancelled'],
+    out_for_delivery: ['delivered'],
+    delivered: [],
+    cancelled: [],
+  };
+  if (!transitions[existing.status]?.includes(req.body.status)) {
+    throw AppError.badRequest(`Cannot transition from ${existing.status} to ${req.body.status}`);
+  }
   const r = await specialRepo.updateById(req.params.id, { status: req.body.status });
   ok(res, r);
 });
@@ -89,6 +101,9 @@ exports.updateTotal = asyncHandler(async (req, res) => {
     (!existing.agentId || String(existing.agentId?._id || existing.agentId) !== req.user.id)
   ) {
     throw AppError.forbidden();
+  }
+  if (['delivered', 'cancelled'].includes(existing.status)) {
+    throw AppError.badRequest(`The price of a ${existing.status} order can no longer be changed`);
   }
   const r = await specialRepo.updateById(req.params.id, { total: req.body.total });
   ok(res, r);

@@ -1,9 +1,11 @@
 const SpecialRequest = require('../models/SpecialRequest');
+const orderStats = require('./orderStats');
 
 // Reads expand addressId, userId (name/phone) and agentId (name/phone/vehicle)
 // exactly like requestRepository so special orders render the same everywhere.
 module.exports = {
   STATUSES: SpecialRequest.STATUSES,
+  statsFor: (options) => orderStats(SpecialRequest, options),
   list: ({ filter = {}, skip = 0, limit = 50 } = {}) =>
     SpecialRequest.find(filter)
       .sort({ createdAt: -1 })

@@ -25,13 +25,16 @@ async function transitionStatus({ id, status, actor }) {
   if (!req) throw AppError.notFound('Request not found');
 
   if (actor?.role === 'agent') {
-    if (!req.agentId || String(req.agentId) !== actor.id) {
+    if (!req.agentId || String(req.agentId?._id || req.agentId) !== actor.id) {
       throw AppError.forbidden('Not your request');
     }
     if (!agentAllowed.has(status)) {
       throw AppError.forbidden('Agents cannot perform this transition');
     }
   }
+
+  // A retry after a lost response must not repeat an already applied change.
+  if (req.status === status) return req;
 
   const allowed = transitions[req.status] || [];
   if (!allowed.includes(status)) {

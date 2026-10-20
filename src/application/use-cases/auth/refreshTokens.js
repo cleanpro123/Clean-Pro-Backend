@@ -26,7 +26,10 @@ async function refreshTokens({ refreshToken }) {
   if (!repo) throw AppError.unauthorized();
 
   const subject = await repo.findById(decoded.sub);
-  if (!subject) throw AppError.unauthorized();
+  if (!subject || ['blocked', 'deactivated'].includes(subject.status)) {
+    await refreshTokenRepo.deleteByToken(refreshToken);
+    throw AppError.unauthorized('Account is no longer active');
+  }
 
   // rotate: delete old, issue new pair (no lingering revoked row)
   await refreshTokenRepo.deleteByToken(refreshToken);

@@ -11,7 +11,7 @@ async function updateRequestTotal({ id, total, actor }) {
 
   // Agents may only edit orders assigned to them; admins can edit any.
   if (actor?.role === 'agent') {
-    if (!req.agentId || String(req.agentId) !== actor.id) {
+    if (!req.agentId || String(req.agentId?._id || req.agentId) !== actor.id) {
       throw AppError.forbidden('Not your request');
     }
   }

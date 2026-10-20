@@ -25,7 +25,7 @@ exports.userCreate = asyncHandler(async (req, res) => {
   const { requestId, rating, comment } = req.body;
   const order = await requestRepo.findById(requestId);
   if (!order) throw AppError.notFound('Order not found');
-  if (String(order.userId) !== req.user.id) {
+  if (String(order.userId?._id || order.userId) !== req.user.id) {
     throw AppError.forbidden('You can only review your own orders');
   }
   if (order.status !== 'delivered') {

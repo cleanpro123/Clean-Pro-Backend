@@ -79,7 +79,7 @@ exports.get = asyncHandler(async (req, res) => {
   if (req.user.role === 'user' && ownerId !== req.user.id) {
     throw AppError.forbidden();
   }
-  if (req.user.role === 'agent' && (!r.agentId || String(r.agentId) !== req.user.id)) {
+  if (req.user.role === 'agent' && (!r.agentId || String(r.agentId?._id || r.agentId) !== req.user.id)) {
     throw AppError.forbidden();
   }
 

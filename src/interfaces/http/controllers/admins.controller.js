@@ -3,6 +3,11 @@ const { ok, created, noContent } = require('../../../shared/utils/respond');
 const AppError = require('../../../shared/errors/AppError');
 const adminRepo = require('../../../infrastructure/db/repositories/adminRepository');
 const { hashPassword } = require('../../../infrastructure/security/password');
+const staffOtp = require('../../../application/use-cases/auth/staffOtp');
+
+exports.requestOtp = asyncHandler(async (req, res) => {
+  ok(res, await staffOtp.request({ email: req.body.email, role: 'admin', requestedBy: req.user.id }));
+});
 
 exports.list = asyncHandler(async (req, res) => {
   const page = Number(req.query.page || 1);
@@ -22,10 +27,11 @@ exports.get = asyncHandler(async (req, res) => {
 });
 
 exports.create = asyncHandler(async (req, res) => {
-  const { password, email, name } = req.body;
+  const { password, email, name, otpCode } = req.body;
   const existing = await adminRepo.findByEmail(email);
   if (existing) throw AppError.badRequest('An admin with this email already exists');
   const passwordHash = await hashPassword(password);
+  await staffOtp.consume({ email, role: 'admin', requestedBy: req.user.id, otpCode });
   const a = await adminRepo.create({ name, email, passwordHash });
   created(res, a);
 });
